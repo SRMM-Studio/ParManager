@@ -7,10 +7,7 @@
 	<SelfContained>true</SelfContained>
 	<PublishTrimmed>true</PublishTrimmed>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <CodeAnalysisRuleSet>..\Standard.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
-  <Import Project="..\Analyzers.props" />
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />

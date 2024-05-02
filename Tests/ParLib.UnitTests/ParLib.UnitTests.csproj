@@ -2,11 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <CodeAnalysisRuleSet>..\..\Test.ruleset</CodeAnalysisRuleSet>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <Import Project="..\..\Analyzers.props" />
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.12.0" />

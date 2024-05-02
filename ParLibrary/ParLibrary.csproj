@@ -4,10 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <CodeAnalysisRuleSet>..\Standard.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
-  <Import Project="..\Analyzers.props" />
 
   <ItemGroup>
     <PackageReference Include="Ionic.Zlib.Core" Version="1.0.0" />

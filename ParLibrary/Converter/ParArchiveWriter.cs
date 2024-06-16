@@ -145,7 +145,7 @@ namespace ParLibrary.Converter
             WriteFolders(writer, folders);
             WriteFiles(writer, files, dataPosition);
 
-            dataStream.Seek(0, SeekOrigin.End);
+            dataStream.Seek(0, Yarhl.IO.SeekMode.End);
             writer.WritePadding(0, 2048);
 
             var result = new ParFile(dataStream)
@@ -357,11 +357,11 @@ namespace ParLibrary.Converter
                 writer.Write(seconds);
 
                 long currentPos = writer.Stream.Position;
-                writer.Stream.Seek(0, SeekOrigin.End);
+                writer.Stream.Seek(0, Yarhl.IO.SeekMode.End);
                 writer.WriteUntilLength(0, dataPosition);
                 node.Stream.WriteTo(writer.Stream);
                 dataPosition = writer.Stream.Position;
-                writer.Stream.Seek(currentPos, SeekOrigin.Begin);
+                writer.Stream.Seek(currentPos, Yarhl.IO.SeekMode.Start);
             }
         }
     }

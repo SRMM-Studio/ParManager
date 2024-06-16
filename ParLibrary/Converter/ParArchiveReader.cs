@@ -109,7 +109,7 @@ namespace ParLibrary.Converter
                 fileNames[i] = reader.ReadString(0x40).TrimEnd('\0');
             }
 
-            reader.Stream.Seek(folderInfoOffset, System.IO.SeekOrigin.Begin);
+            reader.Stream.Seek(folderInfoOffset, Yarhl.IO.SeekMode.Start);
             var folders = new Node[totalFolderCount];
 
             for (var i = 0; i < totalFolderCount; i++)
@@ -130,7 +130,7 @@ namespace ParLibrary.Converter
                 };
             }
 
-            reader.Stream.Seek(fileInfoOffset, System.IO.SeekOrigin.Begin);
+            reader.Stream.Seek(fileInfoOffset, Yarhl.IO.SeekMode.Start);
             var files = new Node[totalFileCount];
 
             for (var i = 0; i < totalFileCount; i++)

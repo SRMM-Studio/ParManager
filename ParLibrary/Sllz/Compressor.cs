@@ -112,7 +112,7 @@ namespace ParLibrary.Sllz
             long currentPos = writer.Stream.Position;
             writer.Write(0x00000000); // Compressed size
             compressedDataStream.WriteTo(outputDataStream);
-            writer.Stream.Seek(currentPos, SeekOrigin.Begin);
+            writer.Stream.Seek(currentPos, Yarhl.IO.SeekMode.Start);
             writer.Write((int)(compressedDataStream.Length + 0x10)); // data + header
 
             compressedDataStream.Dispose();

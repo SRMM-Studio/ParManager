@@ -43,7 +43,7 @@ namespace ParTool
             };
 
             using Node par = NodeFactory.FromFile(opts.InputParArchivePath, Yarhl.IO.FileOpenMode.Read);
-            par.TransformWith<ParArchiveReader, ParArchiveReaderParameters>(readerParameters);
+            par.TransformWith(new ParArchiveReader(readerParameters));
 
             Node foundNode = Navigator.SearchNode(par, opts.RemovePath);
 

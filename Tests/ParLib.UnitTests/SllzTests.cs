@@ -36,8 +36,8 @@ namespace ParLib.UnitTests
                 Version = compressorVersion,
             };
 
-            var compressedBinaryFormat = (ParFile)ConvertFormat.With<Compressor, CompressorParameters>(parameters, binaryFormat);
-            var decompressedBinaryFormat = (ParFile)ConvertFormat.With<Decompressor>(compressedBinaryFormat);
+            var compressedBinaryFormat = (ParFile)ConvertFormat.With(typeof(Compressor), binaryFormat, parameters);
+            var decompressedBinaryFormat = (ParFile)ConvertFormat.With(typeof(Decompressor), compressedBinaryFormat);
 
             Assert.IsTrue(compressedBinaryFormat.Stream.Length < decompressedBinaryFormat.Stream.Length);
             Assert.IsTrue(dataStream.Compare(decompressedBinaryFormat.Stream));

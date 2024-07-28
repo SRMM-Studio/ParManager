@@ -60,7 +60,7 @@ namespace ParTool
             DateTime startTime = DateTime.Now;
             Console.WriteLine("Creating PAR (this may take a while)... ");
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.ParArchivePath)));
-            node.TransformWith<ParArchiveWriter, ParArchiveWriterParameters>(parameters);
+            node.TransformWith(new ParArchiveWriter(parameters));
             node.Dispose();
 
             DateTime endTime = DateTime.Now;

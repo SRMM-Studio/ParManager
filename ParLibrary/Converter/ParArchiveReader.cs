@@ -14,12 +14,26 @@ namespace ParLibrary.Converter
     /// <summary>
     /// Converter from BinaryFormat to ParArchive.
     /// </summary>
-    public class ParArchiveReader : IInitializer<ParArchiveReaderParameters>, IConverter<BinaryFormat, NodeContainerFormat>
+    public class ParArchiveReader : IConverter<BinaryFormat, NodeContainerFormat>
     {
         private ParArchiveReaderParameters parameters = new ParArchiveReaderParameters
         {
             Recursive = false,
         };
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParArchiveReader"/> class.
+        /// </summary>
+        public ParArchiveReader() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParArchiveReader"/> class.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        public ParArchiveReader(ParArchiveReaderParameters parameters)
+        {
+            this.parameters = parameters;
+        }
 
         /// <summary>
         /// Initializes reader parameters.
@@ -57,7 +71,7 @@ namespace ParLibrary.Converter
             {
                 var subStream = new DataStream(source.Stream, 0, source.Stream.Length);
                 var compressed = new ParFile(subStream);
-                source = (ParFile)ConvertFormat.With<Sllz.Decompressor>(compressed);
+                source = (ParFile)ConvertFormat.With(typeof(Sllz.Decompressor), compressed);
                 source.Stream.Position = 0;
 
                 reader = new DataReader(source.Stream)
@@ -109,7 +123,7 @@ namespace ParLibrary.Converter
                 fileNames[i] = reader.ReadString(0x40).TrimEnd('\0');
             }
 
-            reader.Stream.Seek(folderInfoOffset, Yarhl.IO.SeekMode.Start);
+            reader.Stream.Seek(folderInfoOffset, System.IO.SeekOrigin.Begin);
             var folders = new Node[totalFolderCount];
 
             for (var i = 0; i < totalFolderCount; i++)
@@ -130,7 +144,7 @@ namespace ParLibrary.Converter
                 };
             }
 
-            reader.Stream.Seek(fileInfoOffset, Yarhl.IO.SeekMode.Start);
+            reader.Stream.Seek(fileInfoOffset, System.IO.SeekOrigin.Begin);
             var files = new Node[totalFileCount];
 
             for (var i = 0; i < totalFileCount; i++)
@@ -183,7 +197,7 @@ namespace ParLibrary.Converter
             {
                 if (parameters.Recursive && files[i].Name.EndsWith(".par", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    files[i].TransformWith<ParArchiveReader, ParArchiveReaderParameters>(parameters);
+                    files[i].TransformWith(new ParArchiveReader(parameters));
                 }
 
                 node.Add(files[i]);

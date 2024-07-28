@@ -56,14 +56,14 @@ namespace ParTool
 
             Console.Write("Reading PAR file... ");
             Node par = NodeFactory.FromFile(opts.InputParArchivePath, Yarhl.IO.FileOpenMode.Read);
-            par.TransformWith<ParArchiveReader, ParArchiveReaderParameters>(readerParameters);
+            par.TransformWith(new ParArchiveReader(readerParameters));
             writerParameters.IncludeDots = par.Children[0].Name == ".";
             Console.WriteLine("DONE!");
 
             Console.Write("Reading input directory... ");
             string nodeName = new DirectoryInfo(opts.AddDirectory).Name;
             Node node = ReadDirectory(opts.AddDirectory, nodeName);
-            node.TransformWith<ParArchiveWriter, ParArchiveWriterParameters>(writerParameters).TransformWith<ParArchiveReader, ParArchiveReaderParameters>(readerParameters);
+            node.TransformWith(new ParArchiveWriter(writerParameters)).TransformWith(new ParArchiveReader(readerParameters));
             Console.WriteLine("DONE!");
 
             Console.Write("Adding files... ");
@@ -81,7 +81,7 @@ namespace ParTool
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(opts.OutputParArchivePath)));
             writerParameters.OutputPath = opts.OutputParArchivePath;
             writerParameters.IncludeDots = false;
-            par.TransformWith<ParArchiveWriter, ParArchiveWriterParameters>(writerParameters);
+            par.TransformWith(new ParArchiveWriter(writerParameters));
             par.Dispose();
             node.Dispose();
 

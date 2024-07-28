@@ -17,7 +17,7 @@ namespace ParLibrary.Converter
     /// <summary>
     /// Converter from PAR to BinaryFormat.
     /// </summary>
-    public class ParArchiveWriter : IInitializer<ParArchiveWriterParameters>, IConverter<NodeContainerFormat, ParFile>
+    public class ParArchiveWriter : IConverter<NodeContainerFormat, ParFile>
     {
         private ParArchiveWriterParameters parameters = new ParArchiveWriterParameters
         {
@@ -50,6 +50,20 @@ namespace ParLibrary.Converter
         /// Occurs after the file is compressed.
         /// </summary>
         public static event NodeEventHandler FileCompressed;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParArchiveWriter"/> class.
+        /// </summary>
+        public ParArchiveWriter() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParArchiveWriter"/> class.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        public ParArchiveWriter(ParArchiveWriterParameters parameters)
+        {
+            this.parameters = parameters;
+        }
 
         /// <inheritdoc />
         public void Initialize(ParArchiveWriterParameters parameters)
@@ -145,7 +159,7 @@ namespace ParLibrary.Converter
             WriteFolders(writer, folders);
             WriteFiles(writer, files, dataPosition);
 
-            dataStream.Seek(0, Yarhl.IO.SeekMode.End);
+            dataStream.Seek(0, SeekOrigin.End);
             writer.WritePadding(0, 2048);
 
             var result = new ParFile(dataStream)
@@ -187,12 +201,12 @@ namespace ParLibrary.Converter
                         {
                             NestedParCreating?.Invoke(child);
 
-                            child.TransformWith<ParArchiveWriter, ParArchiveWriterParameters>(
+                            child.TransformWith(new ParArchiveWriter(
                                 new ParArchiveWriterParameters
                                 {
                                     CompressorVersion = parameters.CompressorVersion,
                                     IncludeDots = parameters.IncludeDots,
-                                });
+                                }));
                             NestedParCreated?.Invoke(child);
 
                             files.Add(child);
@@ -241,8 +255,7 @@ namespace ParLibrary.Converter
                 }
 
                 FileCompressing?.Invoke(node);
-                var compressed =
-                    (ParFile)ConvertFormat.With<Compressor, CompressorParameters>(compressorParameters, parFile);
+                var compressed = (ParFile)ConvertFormat.With(typeof(Compressor), parFile, compressorParameters);
 
                 long diff = parFile.Stream.Length - compressed.Stream.Length;
                 if (diff >= 0 && (parFile.Stream.Length < 2048 || diff >= 2048))
@@ -357,11 +370,11 @@ namespace ParLibrary.Converter
                 writer.Write(seconds);
 
                 long currentPos = writer.Stream.Position;
-                writer.Stream.Seek(0, Yarhl.IO.SeekMode.End);
+                writer.Stream.Seek(0, SeekOrigin.End);
                 writer.WriteUntilLength(0, dataPosition);
                 node.Stream.WriteTo(writer.Stream);
                 dataPosition = writer.Stream.Position;
-                writer.Stream.Seek(currentPos, Yarhl.IO.SeekMode.Start);
+                writer.Stream.Seek(currentPos, SeekOrigin.Begin);
             }
         }
     }

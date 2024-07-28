@@ -13,12 +13,26 @@ namespace ParLibrary.Sllz
     /// <summary>
     /// Manages SLLZ compression used in Yakuza games.
     /// </summary>
-    public class Compressor : IConverter<ParFile, ParFile>, IInitializer<CompressorParameters>
+    public class Compressor : IConverter<ParFile, ParFile>
     {
         private const int MAX_WINDOW_SIZE = 4096;
         private const int MAX_ENCODED_LENGTH = 18;
 
         private CompressorParameters compressorParameters;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Compressor"/> class.
+        /// </summary>
+        public Compressor() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Compressor"/> class.
+        /// </summary>
+        /// <param name="parameters">Compressor configuration.</param>
+        public Compressor(CompressorParameters parameters)
+        {
+            this.compressorParameters = parameters;
+        }
 
         /// <summary>
         /// Initializes the compressor parameters.
@@ -112,7 +126,7 @@ namespace ParLibrary.Sllz
             long currentPos = writer.Stream.Position;
             writer.Write(0x00000000); // Compressed size
             compressedDataStream.WriteTo(outputDataStream);
-            writer.Stream.Seek(currentPos, Yarhl.IO.SeekMode.Start);
+            writer.Stream.Seek(currentPos, SeekOrigin.Begin);
             writer.Write((int)(compressedDataStream.Length + 0x10)); // data + header
 
             compressedDataStream.Dispose();

@@ -65,7 +65,7 @@ namespace ParLibrary.Sllz
             int decompressedSize = reader.ReadInt32();
             int compressedSize = reader.ReadInt32();
 
-            reader.Stream.Seek(headerSize, Yarhl.IO.SeekMode.Start);
+            reader.Stream.Seek(headerSize, SeekOrigin.Begin);
 
             if (version == 1)
             {

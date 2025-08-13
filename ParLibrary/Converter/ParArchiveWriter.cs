@@ -143,7 +143,7 @@ namespace ParLibrary.Converter
             WriteNames(writer, files);
 
             WriteFolders(writer, folders);
-            WriteFiles(writer, files, dataPosition);
+            WriteFiles(writer, files, dataPosition, parameters);
 
             dataStream.Seek(0, SeekOrigin.End);
             writer.WritePadding(0, 2048);
@@ -300,7 +300,7 @@ namespace ParLibrary.Converter
             }
         }
 
-        private static void WriteFiles(DataWriter writer, IEnumerable<Node> files, long dataPosition)
+        private static void WriteFiles(DataWriter writer, IEnumerable<Node> files, long dataPosition,  ParArchiveWriterParameters parameters)
         {
             long blockSize = 0;
 
@@ -330,23 +330,30 @@ namespace ParLibrary.Converter
                     }
                 }
 
+
+                ulong seconds = 0;
                 int attributes = parFile.Attributes;
-                DateTime date = parFile.FileDate;
-                var baseDate = new DateTime(1970, 1, 1);
 
-                if (node.Tags.ContainsKey("Timestamp"))
+
+                if (!parameters.ResetFileDates)
                 {
-                    date = baseDate.AddSeconds(node.Tags["Timestamp"]);
-                }
+                    DateTime date = parFile.FileDate;
+                    var baseDate = new DateTime(1970, 1, 1);
 
-                if (node.Tags.ContainsKey("FileInfo"))
-                {
-                    FileInfo info = node.Tags["FileInfo"];
-                    attributes = (int)info.Attributes;
-                    date = info.LastWriteTime;
-                }
+                    if (node.Tags.ContainsKey("Timestamp"))
+                    {
+                        date = baseDate.AddSeconds(node.Tags["Timestamp"]);
+                    }
 
-                var seconds = (ulong)(date - baseDate).TotalSeconds;
+                    if (node.Tags.ContainsKey("FileInfo"))
+                    {
+                        FileInfo info = node.Tags["FileInfo"];
+                        attributes = (int)info.Attributes;
+                        date = info.LastWriteTime;
+                    }
+
+                    seconds = (ulong)(date - baseDate).TotalSeconds;
+                };
 
                 writer.Write(parFile.IsCompressed ? 0x80000000 : 0x00000000);
                 writer.Write(parFile.DecompressedSize);
